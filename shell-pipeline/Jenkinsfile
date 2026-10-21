@@ -1,0 +1,50 @@
+
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Source code is available in the workspace.'
+                sh 'pwd'
+                sh 'ls -la'
+            }
+        }
+
+        stage('Check Shell') {
+            steps {
+                sh '''
+                    echo "Checking Bash installation..."
+                    bash --version
+                    git --version
+                '''
+            }
+        }
+
+        stage('Run Script') {
+            steps {
+                sh 'bash shell-pipeline/hello.sh'
+            }
+        }
+
+        stage('Build Success') {
+            steps {
+                echo 'All pipeline stages passed!'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'SUCCESS: Jenkins pipeline completed.'
+        }
+        failure {
+            echo 'FAILURE: Check the Console Output.'
+        }
+    }
+}
